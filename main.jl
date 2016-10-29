@@ -2,8 +2,8 @@
 @require "github.com/jkroso/Port.jl" Port
 
 """
-Cursors present immutable data as if it was mutable. But instead of mutating 
-the data it derives a new value and `put!`s it on a `Port`. Subscribing to 
+Cursors present immutable data as if it was mutable. But instead of mutating
+the data it derives a new value and `put!`s it on a `Port`. Subscribing to
 the `Port` provides access to all values in time series
 """
 abstract Cursor
@@ -29,7 +29,7 @@ Base.get(c::Cursor, key, default=Nullable()) =
 Base.put!(c::SubCursor, value) = (t=assoc(need(c.parent), c.key, value); put!(c.parent, t); t)
 Base.put!(c::TopLevelCursor, value) = (put!(c.port, TopLevelCursor(value, c.port)); value)
 
-Base.setindex!(c::Cursor, value, key...) = assoc!(c, value, key)
+Base.setindex!(c::Cursor, value, key) = assoc!(c, key, value)
 
 Base.map(f::Function, c::Cursor) = map(t->f(SubCursor(c, t...)), enumerate(need(c)))
 
