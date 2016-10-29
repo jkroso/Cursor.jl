@@ -1,6 +1,6 @@
 include("main.jl")
 
-c = TopLevelCursor(Dict(:a=>1,:b=>[:a,:b,:c]))
+c = Cursor(Dict(:a=>1,:b=>[:a,:b,:c]))
 f = @spawn take!(c.port)
 sleep(0)
 put!(c[:b][2], :d)
@@ -14,7 +14,7 @@ sleep(0)
 c[:a] = 2
 @test need(need(f)) == Dict(:a=>2,:b=>[:a,:b,:c])
 
-c = TopLevelCursor([:a,:b])
+c = Cursor([:a,:b])
 @test map(identity, c) == [SubCursor(c,1,:a),SubCursor(c,2,:b)]
 
 f = @spawn take!(c.port)

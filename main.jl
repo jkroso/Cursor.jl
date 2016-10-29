@@ -1,4 +1,4 @@
-@require "github.com/jkroso/Prospects.jl" need assoc push
+@require "github.com/jkroso/Prospects.jl" need assoc push assoc_in
 @require "github.com/jkroso/Port.jl" Port
 
 """
@@ -19,7 +19,7 @@ immutable SubCursor <: Cursor
   value::Nullable
 end
 
-TopLevelCursor(value) = TopLevelCursor(value, Port())
+(::Type{Cursor})(value) = TopLevelCursor(value, Port())
 
 Base.isnull(c::Cursor) = isnull(c.value)
 Base.getindex(c::Cursor, key::Any) = get(c, key)
@@ -36,7 +36,9 @@ Base.map(f::Function, c::Cursor) = map(t->f(SubCursor(c, t...)), enumerate(need(
 Base.map!(f::Function, c::Cursor) = put!(c, map(f, need(c)))
 Base.push!(c::Cursor, value) = put!(c, push(need(c), value))
 Base.append!(c::Cursor, value) = put!(c, append(need(c), value))
-assoc!(c::Cursor, key, value) = put!(c, assoc(need(c), key, value))
 Base.:!(c::Cursor) = !need(c)
 
 need(c::Cursor) = need(c.value)
+
+assoc!(c::Cursor, key, value) = put!(c, assoc(need(c), key, value))
+assoc_in!(c::Cursor, pairs) = put!(c, assoc_in(need(c), pairs...))
