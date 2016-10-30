@@ -41,4 +41,4 @@ Base.:!(c::Cursor) = !need(c)
 need(c::Cursor) = need(c.value)
 
 assoc!(c::Cursor, key, value) = put!(c, assoc(need(c), key, value))
-assoc_in!(c::Cursor, pairs) = put!(c, assoc_in(need(c), pairs...))
+assoc_in!(c::Cursor, pairs...) = put!(c, assoc_in(need(c), pairs...))
