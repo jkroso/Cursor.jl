@@ -19,7 +19,7 @@ immutable SubCursor{T} <: Cursor{T}
   value::Nullable{T}
 end
 
-(::Type{Cursor})(value) = TopLevelCursor(value, Port())
+(::Type{Cursor})(value,port=Port()) = TopLevelCursor(value, port)
 TopLevelCursor{T}(value::T, p::Port) = TopLevelCursor{T}(value, p)
 SubCursor{T}(parent::Cursor, key::Any, value::T) = SubCursor{T}(parent, key, value)
 
@@ -52,5 +52,5 @@ need(c::Cursor) = need(c.value)
 assoc!(c::Cursor, key, value) = put!(c, assoc(need(c), key, value))
 assoc_in!(c::Cursor, pairs...) = put!(c, assoc_in(need(c), pairs...))
 
-delete!(c::SubCursor) = delete!(c.parent, c.key)
-delete!(c::Cursor, key) = put!(c, dissoc(need(c), key))
+Base.delete!(c::SubCursor) = delete!(c.parent, c.key)
+Base.delete!(c::Cursor, key) = put!(c, dissoc(need(c), key))
