@@ -27,3 +27,9 @@ f = @spawn take!(c.port)
 sleep(0)
 push!(c, :c)
 @test need(need(f)) == [:a, :b, :c]
+
+c = Cursor([1,2,3])
+f = @spawn take!(c.port)
+sleep(0)
+delete!(c[2])
+@test need(f)|>need == [1,3]

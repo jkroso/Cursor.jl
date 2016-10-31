@@ -1,4 +1,4 @@
-@require "github.com/jkroso/Prospects.jl" need assoc push assoc_in
+@require "github.com/jkroso/Prospects.jl" exports...
 @require "github.com/jkroso/Port.jl" Port
 
 """
@@ -51,3 +51,6 @@ need(c::Cursor) = need(c.value)
 
 assoc!(c::Cursor, key, value) = put!(c, assoc(need(c), key, value))
 assoc_in!(c::Cursor, pairs...) = put!(c, assoc_in(need(c), pairs...))
+
+delete!(c::SubCursor) = delete!(c.parent, c.key)
+delete!(c::Cursor, key) = put!(c, dissoc(need(c), key))
