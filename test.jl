@@ -16,6 +16,7 @@ c[:a] = 2
 
 c = Cursor([:a,:b])
 @test map(identity, c) == [SubCursor(c,1,:a),SubCursor(c,2,:b)]
+@test collect(c) == [SubCursor(c,1,:a),SubCursor(c,2,:b)]
 
 f = @spawn take!(c.port)
 sleep(0)
