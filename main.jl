@@ -25,8 +25,7 @@ SubCursor{T}(parent::Cursor, key::Any, value::T) = SubCursor{T}(parent, key, val
 
 Base.isnull(c::Cursor) = isnull(c.value)
 Base.getindex(c::Cursor, key::Any) = get(c, key)
-Base.get(c::Cursor, key, default=Nullable()) =
-  SubCursor(c, key, isnull(c) ? c.value : get(need(c), key, default))
+Base.get(c::Cursor, key, default) = SubCursor(c, key, get(need(c), key, default))
 
 Base.put!(c::SubCursor, value) = (t=assoc(need(c.parent), c.key, value); put!(c.parent, t); t)
 Base.put!(c::TopLevelCursor, value) = (put!(c.port, TopLevelCursor(value, c.port)); value)
