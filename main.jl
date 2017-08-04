@@ -6,14 +6,14 @@ Cursors present immutable data as if it was mutable. But instead of mutating
 the data it derives a new value and `put!`s it on a `Port`. Subscribing to
 the `Port` provides access to all values in time series
 """
-abstract Cursor{T}
+abstract type Cursor{T} end
 
-immutable TopLevelCursor{T} <: Cursor{T}
+struct TopLevelCursor{T} <: Cursor{T}
   value::Nullable{T}
   port::Port
 end
 
-immutable SubCursor{T} <: Cursor{T}
+struct SubCursor{T} <: Cursor{T}
   parent::Cursor
   key::Any
   value::Nullable{T}
