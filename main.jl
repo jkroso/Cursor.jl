@@ -34,6 +34,7 @@ Base.length(c::Cursor) = length(need(c))
 Base.start(::Cursor) = 1
 Base.next(c::Cursor, i) = (c[i], i + 1)
 Base.done(c::Cursor, i) = i > endof(c)
+Base.haskey(c::Cursor) = haskey(need(c))
 
 Base.put!(c::TopLevelCursor, value) = (put!(c.port, TopLevelCursor(value, c.port)); value)
 Base.put!(c::SubCursor, value) = begin
