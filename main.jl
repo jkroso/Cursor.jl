@@ -7,25 +7,22 @@ the data it derives a new value and `put!`s it on a `Port`. Subscribing to
 the `Port` provides access to all values in time series
 """
 abstract type Cursor{T} end
+(::Type{Cursor})(value,port=Port()) = TopLevelCursor(value, port)
 
 struct TopLevelCursor{T} <: Cursor{T}
-  value::Nullable{T}
+  value::T
   port::Port
 end
 
 struct SubCursor{T} <: Cursor{T}
   parent::Cursor
   key::Any
-  value::Nullable{T}
+  value::T
 end
 
-(::Type{Cursor})(value,port=Port()) = TopLevelCursor(value, port)
-TopLevelCursor{T}(value::T, p::Port) = TopLevelCursor{T}(value, p)
-SubCursor{T}(parent::Cursor, key::Any, value::T) = SubCursor{T}(parent, key, value)
-
-need(c::Cursor) = need(c.value)
-Base.isnull(c::Cursor) = isnull(c.value)
+need(c::Cursor) = c.value
 Base.getindex(c::Cursor, key::Any) = get(c, key)
+Base.get(c::Cursor, key) = SubCursor(c, key, get(need(c), key))
 Base.get(c::Cursor, key, default) = SubCursor(c, key, get(need(c), key, default))
 Base.map(f::Function, c::Cursor) = map(t->f(SubCursor(c, t...)), enumerate(need(c)))
 Base.eltype(c::Cursor) = SubCursor{eltype(need(c))}
@@ -43,6 +40,5 @@ Base.put!(c::SubCursor, value) = begin
   t
 end
 Base.setindex!(c::Cursor, value, key) = put!(c, assoc(need(c), key, value))
-
 Base.delete!(c::SubCursor) = delete!(c.parent, c.key)
 Base.delete!(c::Cursor, key) = put!(c, dissoc(need(c), key))
